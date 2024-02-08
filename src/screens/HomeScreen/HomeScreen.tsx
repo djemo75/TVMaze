@@ -32,7 +32,6 @@ export const HomeScreen = () => {
       } catch (error) {
         let message = 'An error occurred while retrieving the data';
         if (isAxiosError(error)) {
-          console.log('err', JSON.stringify(error));
           message = error.message;
         }
         showToast({
