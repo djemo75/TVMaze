@@ -20,7 +20,7 @@ const initialValues: ContextState = {
 };
 
 type ContextActions = {
-  showToast: (toast: Omit<Toast, 'id'>) => void;
+  showToast: (toast: Omit<Toast, 'id'>) => Toast;
   hideToast: (toastId: Toast['id']) => void;
 };
 
@@ -34,11 +34,13 @@ export const ToastContextProvider: FC<PropsWithChildren> = ({children}) => {
 
   const showToast = useCallback((data: Omit<Toast, 'id'>) => {
     const newToast: Toast = {
-      id: new Date().toTimeString(),
+      id: new Date().getTime().toString(),
       ...data,
     };
 
     setToasts(prevState => [...prevState, newToast]);
+
+    return newToast;
   }, []);
 
   const hideToast = useCallback((toastId: Toast['id']) => {

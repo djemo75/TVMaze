@@ -1,6 +1,6 @@
+import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import React from 'react';
 import {StatusBar} from 'react-native';
 
 import {HomeScreen} from './src/screens/HomeScreen/HomeScreen';
@@ -8,6 +8,7 @@ import {ShowDetailsScreen} from './src/screens/ShowDetailsScreen/ShowDetailsScre
 import {Colors} from './src/constants/colors';
 import {ToastContextProvider} from './src/context/toastContext';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {BadInternetConnectionNotifier} from './src/components/BadInternetConnectionNotifier';
 
 export type RootStackParamList = {
   home: undefined;
@@ -46,6 +47,7 @@ function App(): React.JSX.Element {
             />
           </Stack.Navigator>
         </NavigationContainer>
+        <BadInternetConnectionNotifier />
       </ToastContextProvider>
     </SafeAreaProvider>
   );
