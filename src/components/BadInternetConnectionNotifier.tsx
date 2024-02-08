@@ -26,4 +26,6 @@ export const BadInternetConnectionNotifier = () => {
       hasBadConnectionToast.current = false;
     }
   }, [toasts]);
+
+  return null;
 };
