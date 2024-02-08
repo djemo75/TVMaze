@@ -10,7 +10,7 @@ import {
 import {searchShows} from '../../services/show';
 import {CustomTextInput} from '../../components/CustomTextInput';
 import {Show} from '../../types/show';
-import {ShowsListItem} from './components/ShowsListItem';
+import {ShowsListItem} from '../../components/ShowsListItem';
 import {useToast} from '../../context/toastContext';
 import {isAxiosError} from 'axios';
 import {Colors} from '../../constants/colors';
@@ -32,6 +32,7 @@ export const HomeScreen = () => {
       } catch (error) {
         let message = 'An error occurred while retrieving the data';
         if (isAxiosError(error)) {
+          console.log('err', JSON.stringify(error));
           message = error.message;
         }
         showToast({

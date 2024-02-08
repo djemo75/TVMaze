@@ -1,9 +1,9 @@
 import React from 'react';
 import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
-import {Show} from '../../../types/show';
+import {Show} from '../types/show';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
-import {Colors} from '../../../constants/colors';
-import {RootStackParamList} from '../../../../App';
+import {Colors} from '../constants/colors';
+import {RootStackParamList} from '../../App';
 
 type Props = {
   data: Show;

@@ -7,6 +7,7 @@ import {
 import React, {useCallback, useEffect, useState} from 'react';
 import {
   ActivityIndicator,
+  Button,
   Image,
   Linking,
   Pressable,
@@ -22,11 +23,17 @@ import {Colors} from '../../constants/colors';
 import {removeHtmlFromString} from '../../utils/removeHtmlFromString';
 import {useToast} from '../../context/toastContext';
 import {isAxiosError} from 'axios';
+import {useFavorites} from '../../hooks/useFavorites';
 
 export const ShowDetailsScreen = () => {
   const route = useRoute<RouteProp<RootStackParamList>>();
   const navigate = useNavigation<NavigationProp<RootStackParamList>>();
   const {showToast} = useToast();
+  const {
+    showIds: favoriteShowIds,
+    addShowToFavorites,
+    removeShowFromFavorites,
+  } = useFavorites();
   const [details, setDetails] = useState<Show>();
   const [loading, setLoading] = useState<boolean>();
 
@@ -57,11 +64,27 @@ export const ShowDetailsScreen = () => {
     loadData();
   }, [loadData]);
 
-  const handleClickMoreInfo = () => {
+  const handleAddToFavorites = () => {
+    if (details) {
+      addShowToFavorites(details.id);
+    }
+  };
+
+  const handleRemoveFromFavorites = () => {
+    if (details) {
+      removeShowFromFavorites(details.id);
+    }
+  };
+
+  const handlePressMoreInfo = () => {
     if (details) {
       Linking.openURL(details.url);
     }
   };
+
+  const isAddedToFavoritesList = details
+    ? favoriteShowIds.includes(details.id)
+    : false;
 
   if (loading) {
     return (
@@ -87,12 +110,25 @@ export const ShowDetailsScreen = () => {
           )}
           <Text style={styles.name}>{details.name}</Text>
           <Text style={styles.summary}>
-            {removeHtmlFromString(details.summary)}
+            {details.summary ? removeHtmlFromString(details.summary) : ''}
           </Text>
+
+          <Button
+            title={
+              isAddedToFavoritesList
+                ? 'Remove from favorites'
+                : 'Add to favorites'
+            }
+            onPress={
+              isAddedToFavoritesList
+                ? handleRemoveFromFavorites
+                : handleAddToFavorites
+            }
+          />
 
           {details.url && (
             <Pressable
-              onPress={handleClickMoreInfo}
+              onPress={handlePressMoreInfo}
               style={({pressed}) => [
                 styles.moreInfoButton,
                 pressed && styles.moreInfoButtonPressed,
@@ -149,6 +185,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     borderRadius: 6,
     padding: 12,
+    marginTop: 12,
   },
   moreInfoButtonPressed: {
     opacity: 0.9,
