@@ -66,3 +66,8 @@ If you can't get this to work, see the [Troubleshooting](https://reactnative.dev
 <img src="https://i.ibb.co/0jJ5jN4/Simulator-Screen-Shot-i-Phone-13-Pro-2024-02-08-at-20-12-22.png" alt="show-details" width="200"/>
 <img src="https://i.ibb.co/YfD2ZDC/Simulator-Screen-Shot-i-Phone-13-Pro-2024-02-08-at-20-12-34.png" alt="favorites" width="200"/>
 </div>
+<div style="display: "flex">
+<img src="https://i.ibb.co/chc0sNv/Simulator-Screen-Shot-i-Phone-13-Pro-2024-02-08-at-20-20-49.png" alt="bad-connection-toast" width="200"/>
+<img src="https://i.ibb.co/PFrdHKg/Simulator-Screen-Shot-i-Phone-13-Pro-2024-02-08-at-20-23-21.png" alt="error-handling-toast" width="200"/>
+</div>
+
