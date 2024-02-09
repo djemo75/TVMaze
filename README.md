@@ -61,7 +61,7 @@ If you can't get this to work, see the [Troubleshooting](https://reactnative.dev
 # Screenshots
 
 <div style="display: "flex">
-<img src="https://i.ibb.co/5kv1pCb/Simulator-Screen-Shot-i-Phone-13-Pro-2024-02-08-at-20-05-33.png" alt="home" width="200"/>
+<img src="https://i.ibb.co/dDWX4v4/Simulator-Screen-Shot-i-Phone-13-Pro-2024-02-09-at-17-17-42.png" alt="home" width="200"/>
 <img src="https://i.ibb.co/KmB6Z8M/Simulator-Screen-Shot-i-Phone-13-Pro-2024-02-08-at-20-11-03.png" alt="home" width="200"/>
 <img src="https://i.ibb.co/0jJ5jN4/Simulator-Screen-Shot-i-Phone-13-Pro-2024-02-08-at-20-12-22.png" alt="show-details" width="200"/>
 <img src="https://i.ibb.co/YfD2ZDC/Simulator-Screen-Shot-i-Phone-13-Pro-2024-02-08-at-20-12-34.png" alt="favorites" width="200"/>
