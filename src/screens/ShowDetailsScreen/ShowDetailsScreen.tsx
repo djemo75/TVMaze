@@ -24,6 +24,7 @@ import {removeHtmlFromString} from '../../utils/removeHtmlFromString';
 import {useToast} from '../../context/toastContext';
 import {isAxiosError} from 'axios';
 import {useFavorites} from '../../hooks/useFavorites';
+import {StackScreenSafeArea} from '../../components/StackScreenSafeArea';
 
 export const ShowDetailsScreen = () => {
   const route = useRoute<RouteProp<RootStackParamList>>();
@@ -95,50 +96,52 @@ export const ShowDetailsScreen = () => {
   }
 
   return (
-    <ScrollView style={styles.root}>
-      {details && (
-        <View style={styles.innerContainer}>
-          {details.image ? (
-            <Image
-              source={{uri: details.image.original}}
-              style={styles.image}
+    <StackScreenSafeArea>
+      <ScrollView style={styles.root}>
+        {details && (
+          <View style={styles.innerContainer}>
+            {details.image ? (
+              <Image
+                source={{uri: details.image.original}}
+                style={styles.image}
+              />
+            ) : (
+              <View style={styles.image}>
+                <Text style={styles.noImageText}>No Image</Text>
+              </View>
+            )}
+            <Text style={styles.name}>{details.name}</Text>
+            <Text style={styles.summary}>
+              {details.summary ? removeHtmlFromString(details.summary) : ''}
+            </Text>
+
+            <Button
+              title={
+                isAddedToFavoritesList
+                  ? 'Remove from favorites'
+                  : 'Add to favorites'
+              }
+              onPress={
+                isAddedToFavoritesList
+                  ? handleRemoveFromFavorites
+                  : handleAddToFavorites
+              }
             />
-          ) : (
-            <View style={styles.image}>
-              <Text style={styles.noImageText}>No Image</Text>
-            </View>
-          )}
-          <Text style={styles.name}>{details.name}</Text>
-          <Text style={styles.summary}>
-            {details.summary ? removeHtmlFromString(details.summary) : ''}
-          </Text>
 
-          <Button
-            title={
-              isAddedToFavoritesList
-                ? 'Remove from favorites'
-                : 'Add to favorites'
-            }
-            onPress={
-              isAddedToFavoritesList
-                ? handleRemoveFromFavorites
-                : handleAddToFavorites
-            }
-          />
-
-          {details.url && (
-            <Pressable
-              onPress={handlePressMoreInfo}
-              style={({pressed}) => [
-                styles.moreInfoButton,
-                pressed && styles.moreInfoButtonPressed,
-              ]}>
-              <Text style={styles.moreInfoButtonText}>More info</Text>
-            </Pressable>
-          )}
-        </View>
-      )}
-    </ScrollView>
+            {details.url && (
+              <Pressable
+                onPress={handlePressMoreInfo}
+                style={({pressed}) => [
+                  styles.moreInfoButton,
+                  pressed && styles.moreInfoButtonPressed,
+                ]}>
+                <Text style={styles.moreInfoButtonText}>More info</Text>
+              </Pressable>
+            )}
+          </View>
+        )}
+      </ScrollView>
+    </StackScreenSafeArea>
   );
 };
 

@@ -14,6 +14,7 @@ import {Show} from '../../types/show';
 import {getShowDetails} from '../../services/show';
 import {useToast} from '../../context/toastContext';
 import {ShowsListItem} from '../../components/ShowsListItem';
+import {StackScreenSafeArea} from '../../components/StackScreenSafeArea';
 
 export const FavoritesScreen = () => {
   const isFocused = useIsFocused();
@@ -54,30 +55,34 @@ export const FavoritesScreen = () => {
   };
 
   return (
-    <View style={styles.root}>
-      <Text style={styles.screenTitle}>Favorite shows ({showIds.length})</Text>
+    <StackScreenSafeArea>
+      <View style={styles.root}>
+        <Text style={styles.screenTitle}>
+          Favorite shows ({showIds.length})
+        </Text>
 
-      {loading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator />
-        </View>
-      ) : (
-        <View style={styles.listContainer}>
-          {shows.length ? (
-            <FlatList
-              data={shows}
-              renderItem={renderItem}
-              keyExtractor={item => item.id.toString()}
-            />
-          ) : (
-            <Text style={styles.noFavoritesText}>
-              Add your favorite series so you can easily access them later from
-              this screen.
-            </Text>
-          )}
-        </View>
-      )}
-    </View>
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator />
+          </View>
+        ) : (
+          <View style={styles.listContainer}>
+            {shows.length ? (
+              <FlatList
+                data={shows}
+                renderItem={renderItem}
+                keyExtractor={item => item.id.toString()}
+              />
+            ) : (
+              <Text style={styles.noFavoritesText}>
+                Add your favorite series so you can easily access them later
+                from this screen.
+              </Text>
+            )}
+          </View>
+        )}
+      </View>
+    </StackScreenSafeArea>
   );
 };
 
@@ -85,6 +90,7 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     padding: 20,
+    paddingBottom: 0,
   },
   screenTitle: {
     fontSize: 18,

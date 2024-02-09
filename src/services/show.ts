@@ -8,6 +8,10 @@ export const searchShows = async (searchString: string) => {
   );
 };
 
+export const getShows = async (page: number) => {
+  return axios.get<Show[]>(`${REACT_APP_TV_MAZE_API_URL}/shows?page=${page}`);
+};
+
 export const getShowDetails = async (id: string) => {
   return axios.get<Show>(`${REACT_APP_TV_MAZE_API_URL}/shows/${id}`);
 };
