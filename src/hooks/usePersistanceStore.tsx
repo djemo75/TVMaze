@@ -67,13 +67,18 @@ export const usePersistanceStore = () => {
   );
 
   const get = useCallback(
-    async <T extends Object>(key: keyof PersistanceStore) => {
+    async <T extends Object>(
+      key: keyof PersistanceStore,
+      isCacheTimeCheckEnabled = true,
+    ) => {
       try {
         const allData = await getAllData();
         if (allData) {
           const cache = allData[key] as Cache;
           if (cache) {
-            if (isCacheFresh(cache.timestamp)) {
+            if (
+              isCacheTimeCheckEnabled ? isCacheFresh(cache.timestamp) : true
+            ) {
               return cache.data as T;
             } else {
               remove(key);
@@ -94,7 +99,7 @@ export const usePersistanceStore = () => {
 
   const isCacheFresh = (timestamp: number) => {
     const timestampNow = new Date().getTime();
-    const validityThreshold = 1 * 60 * 1000; // 5min
+    const validityThreshold = 5 * 60 * 1000; // 5min
 
     return timestampNow - timestamp < validityThreshold;
   };

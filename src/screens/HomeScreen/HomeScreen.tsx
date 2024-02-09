@@ -7,6 +7,7 @@ import {
   View,
 } from 'react-native';
 
+import {useNetInfo} from '@react-native-community/netinfo';
 import {isAxiosError} from 'axios';
 
 import {CustomTextInput} from '../../components/CustomTextInput';
@@ -23,6 +24,7 @@ let timer: NodeJS.Timeout;
 const INITIAL_PAGE = 1;
 
 export const HomeScreen = () => {
+  const {isConnected} = useNetInfo();
   const {showToast} = useToast();
   const {get: getFromPersistanceStore, set: setInPersistanceStore} =
     usePersistanceStore();
@@ -61,33 +63,47 @@ export const HomeScreen = () => {
         setLoading(true);
         if (searchStringValue) {
           const cacheKey = `search/shows?q=${searchStringValue}`;
-          let data = await getFromPersistanceStore<Show[]>(cacheKey);
-          if (!data) {
+          let data = await getFromPersistanceStore<Show[]>(
+            cacheKey,
+            isConnected === true,
+          );
+          if (!data && isConnected === true) {
             const res = await searchShows(searchStringValue);
             data = res.data.map(item => item.show);
             await setInPersistanceStore(cacheKey, data);
           }
-          setShows(data);
+          setShows(data || []);
+
           if (listRef.current) {
             // Scroll to the top so you can easily see the first matching results
             listRef.current.scrollToOffset({animated: true, offset: 0});
           }
         } else {
           const cacheKey = `shows?page=${pageValue}`;
-          let data = await getFromPersistanceStore<Show[]>(cacheKey);
-          if (!data) {
+          let data = await getFromPersistanceStore<Show[]>(
+            cacheKey,
+            isConnected === true,
+          );
+          if (!data && isConnected === true) {
             const res = await getShows(pageValue);
-            data = res.data.splice(0, 10);
+            data = res.data;
             await setInPersistanceStore(cacheKey, data);
           }
-          setShows(prevShows => [...prevShows, ...data]);
+
+          if (data) {
+            setShows(prevShows => [...prevShows, ...data]);
+          } else if (isConnected === false) {
+            // When the device is not connected to the Internet, after extracting the data from the cache,
+            // we need to stop loading the next pages
+            setHasNextPage(false);
+          }
         }
         setLoading(false);
       } catch (error) {
         handleError(error, searchStringValue);
       }
     },
-    [getFromPersistanceStore, setInPersistanceStore, handleError],
+    [isConnected, getFromPersistanceStore, setInPersistanceStore, handleError],
   );
 
   useEffect(() => {

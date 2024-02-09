@@ -11,6 +11,7 @@ import {
   View,
 } from 'react-native';
 
+import {useNetInfo} from '@react-native-community/netinfo';
 import {
   NavigationProp,
   RouteProp,
@@ -32,6 +33,7 @@ import {removeHtmlFromString} from '../../utils/removeHtmlFromString';
 export const ShowDetailsScreen = () => {
   const route = useRoute<RouteProp<RootStackParamList>>();
   const navigate = useNavigation<NavigationProp<RootStackParamList>>();
+  const {isConnected} = useNetInfo();
   const {showToast} = useToast();
   const {get: getFromPersistanceStore, set: setInPersistanceStore} =
     usePersistanceStore();
@@ -51,13 +53,25 @@ export const ShowDetailsScreen = () => {
     try {
       setLoading(true);
       const cacheKey = `shows/${route.params.id}`;
-      let data = await getFromPersistanceStore<Show>(cacheKey);
-      if (!data) {
+      let data = await getFromPersistanceStore<Show>(
+        cacheKey,
+        isConnected === true,
+      );
+      if (!data && isConnected === true) {
         const res = await getShowDetails(route.params.id);
         data = res.data;
         await setInPersistanceStore(cacheKey, data);
       }
-      setDetails(data);
+
+      if (data) {
+        setDetails(data);
+      } else if (isConnected === false) {
+        showToast({
+          type: 'info',
+          text: 'You currently have no internet connection and no data for this show has been downloaded.',
+        });
+        navigate.navigate('home');
+      }
     } catch (error) {
       let message = 'An error occurred while retrieving the data';
       if (isAxiosError(error)) {
@@ -72,6 +86,7 @@ export const ShowDetailsScreen = () => {
     }
   }, [
     route.params,
+    isConnected,
     navigate,
     showToast,
     getFromPersistanceStore,

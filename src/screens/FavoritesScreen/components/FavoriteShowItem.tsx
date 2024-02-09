@@ -1,6 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {ActivityIndicator} from 'react-native';
 
+import {useNetInfo} from '@react-native-community/netinfo';
 import {isAxiosError} from 'axios';
 
 import {ShowsListItem} from '../../../components/ShowsListItem';
@@ -14,6 +15,7 @@ type Props = {
 };
 
 export const FavoriteShowItem = ({showId}: Props) => {
+  const {isConnected} = useNetInfo();
   const {showToast} = useToast();
   const {get: getFromPersistanceStore, set: setInPersistanceStore} =
     usePersistanceStore();
@@ -24,13 +26,20 @@ export const FavoriteShowItem = ({showId}: Props) => {
     try {
       setLoading(true);
       const cacheKey = `shows/${showId}`;
-      let data = await getFromPersistanceStore<Show>(cacheKey);
-      if (!data) {
+      let data = await getFromPersistanceStore<Show>(
+        cacheKey,
+        isConnected === true,
+      );
+
+      if (!data && isConnected === true) {
         const res = await getShowDetails(showId.toString());
         data = res.data;
         await setInPersistanceStore(cacheKey, data);
       }
-      setShow(data);
+
+      if (data) {
+        setShow(data);
+      }
     } catch (error) {
       let message = 'An error occurred while retrieving the show';
       if (isAxiosError(error)) {
@@ -43,7 +52,13 @@ export const FavoriteShowItem = ({showId}: Props) => {
     } finally {
       setLoading(false);
     }
-  }, [showId, showToast, getFromPersistanceStore, setInPersistanceStore]);
+  }, [
+    showId,
+    isConnected,
+    showToast,
+    getFromPersistanceStore,
+    setInPersistanceStore,
+  ]);
 
   useEffect(() => {
     loadData();
