@@ -71,6 +71,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   genres: {
-    color: '#808080',
+    color: Colors.grey,
   },
 });

@@ -40,7 +40,7 @@ function App(): React.JSX.Element {
             headerStyle: {
               backgroundColor: Colors.primary,
             },
-            headerTintColor: '#fff',
+            headerTintColor: Colors.white,
             headerTitleStyle: {
               fontWeight: 'bold',
             },

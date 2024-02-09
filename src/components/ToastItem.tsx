@@ -41,8 +41,8 @@ const style = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-  infoType: {backgroundColor: '#28333b'},
-  errorType: {backgroundColor: '#ff1a4b'},
+  infoType: {backgroundColor: Colors.info},
+  errorType: {backgroundColor: Colors.error},
   toastText: {
     color: Colors.white,
   },
