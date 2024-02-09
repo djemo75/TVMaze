@@ -1,7 +1,9 @@
-import {NavigationProp, useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {Pressable, StyleSheet, Text} from 'react-native';
+
+import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
+
 import {RootStackParamList} from '../../App';
 
 export const HeaderFavoritesButton = () => {

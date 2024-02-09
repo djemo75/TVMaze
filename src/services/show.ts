@@ -1,6 +1,7 @@
-import axios from 'axios';
-import {SearchShowResponse, Show} from '../types/show';
 import {REACT_APP_TV_MAZE_API_URL} from '@env';
+import axios from 'axios';
+
+import {SearchShowResponse, Show} from '../types/show';
 
 export const searchShows = async (searchString: string) => {
   return axios.get<SearchShowResponse>(

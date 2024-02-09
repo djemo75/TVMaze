@@ -1,8 +1,9 @@
 import {useCallback, useEffect, useState} from 'react';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import {Show} from '../types/show';
 import {useToast} from '../context/toastContext';
+import {Show} from '../types/show';
 
 const storageKey = 'favorite-shows';
 

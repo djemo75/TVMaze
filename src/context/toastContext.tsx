@@ -1,15 +1,17 @@
 import React, {
+  createContext,
   FC,
   PropsWithChildren,
-  createContext,
   useCallback,
   useContext,
   useState,
 } from 'react';
 import {StyleSheet, View} from 'react-native';
-import {Toast} from '../types/toast';
-import {ToastItem} from '../components/ToastItem';
+
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+
+import {ToastItem} from '../components/ToastItem';
+import {Toast} from '../types/toast';
 
 type ContextState = {
   toasts: Toast[];

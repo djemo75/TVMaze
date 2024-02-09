@@ -1,27 +1,16 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ActivityIndicator,
-  FlatList,
-  ListRenderItem,
-} from 'react-native';
+import React, {useEffect} from 'react';
+import {FlatList, ListRenderItem, StyleSheet, Text, View} from 'react-native';
+
+import {useIsFocused} from '@react-navigation/native';
+
+import {FavoriteShowItem} from './components/FavoriteShowItem';
+import {StackScreenSafeArea} from '../../components/StackScreenSafeArea';
 import {Colors} from '../../constants/colors';
 import {useFavorites} from '../../hooks/useFavorites';
-import {useIsFocused} from '@react-navigation/native';
-import {Show} from '../../types/show';
-import {getShowDetails} from '../../services/show';
-import {useToast} from '../../context/toastContext';
-import {ShowsListItem} from '../../components/ShowsListItem';
-import {StackScreenSafeArea} from '../../components/StackScreenSafeArea';
 
 export const FavoritesScreen = () => {
   const isFocused = useIsFocused();
-  const {showToast} = useToast();
   const {showIds, getFavoriteShows} = useFavorites();
-  const [shows, setShows] = useState<Show[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (isFocused) {
@@ -29,29 +18,8 @@ export const FavoritesScreen = () => {
     }
   }, [isFocused, getFavoriteShows]);
 
-  const loadShows = useCallback(async () => {
-    try {
-      setLoading(true);
-      const promises = showIds.map(showId => getShowDetails(showId.toString()));
-      const data = await Promise.all(promises);
-
-      setShows(data.map(response => response.data));
-    } catch (error) {
-      showToast({
-        type: 'error',
-        text: 'An error occurred while retrieving favorites list',
-      });
-    } finally {
-      setLoading(false);
-    }
-  }, [showIds, showToast]);
-
-  useEffect(() => {
-    loadShows();
-  }, [loadShows]);
-
-  const renderItem: ListRenderItem<Show> = ({item}) => {
-    return <ShowsListItem data={item} />;
+  const renderItem: ListRenderItem<number> = ({item}) => {
+    return <FavoriteShowItem showId={item} />;
   };
 
   return (
@@ -61,26 +29,20 @@ export const FavoritesScreen = () => {
           Favorite shows ({showIds.length})
         </Text>
 
-        {loading ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator />
-          </View>
-        ) : (
-          <View style={styles.listContainer}>
-            {shows.length ? (
-              <FlatList
-                data={shows}
-                renderItem={renderItem}
-                keyExtractor={item => item.id.toString()}
-              />
-            ) : (
-              <Text style={styles.noFavoritesText}>
-                Add your favorite series so you can easily access them later
-                from this screen.
-              </Text>
-            )}
-          </View>
-        )}
+        <View style={styles.listContainer}>
+          {showIds.length ? (
+            <FlatList
+              data={showIds}
+              renderItem={renderItem}
+              keyExtractor={item => item.toString()}
+            />
+          ) : (
+            <Text style={styles.noFavoritesText}>
+              Add your favorite series so you can easily access them later from
+              this screen.
+            </Text>
+          )}
+        </View>
       </View>
     </StackScreenSafeArea>
   );

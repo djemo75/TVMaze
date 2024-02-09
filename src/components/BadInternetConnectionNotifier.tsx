@@ -1,6 +1,7 @@
 import {useEffect, useRef} from 'react';
-import {axiosResponseTimeChecker} from '../utils/axiosResponseTimeChecker';
+
 import {useToast} from '../context/toastContext';
+import {axiosResponseTimeChecker} from '../utils/axiosResponseTimeChecker';
 
 const millisecondsForBadConnection = 3000;
 const message = 'Bad connection';

@@ -7,14 +7,16 @@ import {
   View,
 } from 'react-native';
 
-import {getShows, searchShows} from '../../services/show';
-import {CustomTextInput} from '../../components/CustomTextInput';
-import {Show} from '../../types/show';
-import {ShowsListItem} from '../../components/ShowsListItem';
-import {useToast} from '../../context/toastContext';
 import {isAxiosError} from 'axios';
-import {Colors} from '../../constants/colors';
+
+import {CustomTextInput} from '../../components/CustomTextInput';
+import {ShowsListItem} from '../../components/ShowsListItem';
 import {StackScreenSafeArea} from '../../components/StackScreenSafeArea';
+import {Colors} from '../../constants/colors';
+import {useToast} from '../../context/toastContext';
+import {usePersistanceStore} from '../../hooks/usePersistanceStore';
+import {getShows, searchShows} from '../../services/show';
+import {Show} from '../../types/show';
 
 let timer: NodeJS.Timeout;
 
@@ -22,6 +24,8 @@ const INITIAL_PAGE = 1;
 
 export const HomeScreen = () => {
   const {showToast} = useToast();
+  const {get: getFromPersistanceStore, set: setInPersistanceStore} =
+    usePersistanceStore();
   const [shows, setShows] = useState<Show[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [searchString, setSearchString] = useState<string>('');
@@ -29,42 +33,61 @@ export const HomeScreen = () => {
   const [hasNextPage, setHasNextPage] = useState(true);
   const listRef = useRef<FlatList>(null);
 
+  const handleError = useCallback(
+    (error: unknown, searchStringValue: string) => {
+      setLoading(false);
+      let message = searchStringValue
+        ? 'An error occurred while searching the show'
+        : 'An error occurred while retrieving the shows';
+      if (isAxiosError(error)) {
+        if (!searchStringValue && error.status === 404) {
+          // The API returns a 404 when we try to retrieve the next page and it doesn't exist
+          setHasNextPage(false);
+          return; // Don't show error in case of error that there are no other pages
+        }
+        message = error.message;
+      }
+      showToast({
+        type: 'error',
+        text: message,
+      });
+    },
+    [showToast],
+  );
+
   const loadData = useCallback(
     async (pageValue: number, searchStringValue: string) => {
       try {
         setLoading(true);
         if (searchStringValue) {
-          const {data} = await searchShows(searchStringValue);
-          setShows(data.map(item => item.show));
+          const cacheKey = `search/shows?q=${searchStringValue}`;
+          let data = await getFromPersistanceStore<Show[]>(cacheKey);
+          if (!data) {
+            const res = await searchShows(searchStringValue);
+            data = res.data.map(item => item.show);
+            await setInPersistanceStore(cacheKey, data);
+          }
+          setShows(data);
           if (listRef.current) {
             // Scroll to the top so you can easily see the first matching results
             listRef.current.scrollToOffset({animated: true, offset: 0});
           }
         } else {
-          const {data} = await getShows(pageValue);
+          const cacheKey = `shows?page=${pageValue}`;
+          let data = await getFromPersistanceStore<Show[]>(cacheKey);
+          if (!data) {
+            const res = await getShows(pageValue);
+            data = res.data.splice(0, 10);
+            await setInPersistanceStore(cacheKey, data);
+          }
           setShows(prevShows => [...prevShows, ...data]);
         }
         setLoading(false);
       } catch (error) {
-        setLoading(false);
-        let message = searchStringValue
-          ? 'An error occurred while searching the show'
-          : 'An error occurred while retrieving the shows';
-        if (isAxiosError(error)) {
-          if (!searchStringValue && error.status === 404) {
-            // The API returns a 404 when we try to retrieve the next page and it doesn't exist
-            setHasNextPage(false);
-            return; // Don't show error in case of error that there are no other pages
-          }
-          message = error.message;
-        }
-        showToast({
-          type: 'error',
-          text: message,
-        });
+        handleError(error, searchStringValue);
       }
     },
-    [showToast],
+    [getFromPersistanceStore, setInPersistanceStore, handleError],
   );
 
   useEffect(() => {

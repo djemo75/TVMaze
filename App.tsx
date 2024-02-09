@@ -1,16 +1,17 @@
 import React, {FC, PropsWithChildren} from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {StatusBar} from 'react-native';
 
-import {HomeScreen} from './src/screens/HomeScreen/HomeScreen';
-import {ShowDetailsScreen} from './src/screens/ShowDetailsScreen/ShowDetailsScreen';
-import {Colors} from './src/constants/colors';
-import {ToastContextProvider} from './src/context/toastContext';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+
 import {BadInternetConnectionNotifier} from './src/components/BadInternetConnectionNotifier';
 import {HeaderFavoritesButton} from './src/components/HeaderFavoritesButton';
+import {Colors} from './src/constants/colors';
+import {ToastContextProvider} from './src/context/toastContext';
 import {FavoritesScreen} from './src/screens/FavoritesScreen/FavoritesScreen';
+import {HomeScreen} from './src/screens/HomeScreen/HomeScreen';
+import {ShowDetailsScreen} from './src/screens/ShowDetailsScreen/ShowDetailsScreen';
 
 export type RootStackParamList = {
   home: undefined;

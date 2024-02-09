@@ -1,8 +1,9 @@
 import React, {useEffect} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import {Toast} from '../types/toast';
+
 import {Colors} from '../constants/colors';
 import {useToast} from '../context/toastContext';
+import {Toast} from '../types/toast';
 
 type Props = {
   data: Toast;

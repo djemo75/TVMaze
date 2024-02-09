@@ -1,9 +1,3 @@
-import {
-  NavigationProp,
-  RouteProp,
-  useNavigation,
-  useRoute,
-} from '@react-navigation/native';
 import React, {useCallback, useEffect, useState} from 'react';
 import {
   ActivityIndicator,
@@ -16,20 +10,31 @@ import {
   Text,
   View,
 } from 'react-native';
-import {RootStackParamList} from '../../../App';
-import {Show} from '../../types/show';
-import {getShowDetails} from '../../services/show';
-import {Colors} from '../../constants/colors';
-import {removeHtmlFromString} from '../../utils/removeHtmlFromString';
-import {useToast} from '../../context/toastContext';
+
+import {
+  NavigationProp,
+  RouteProp,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import {isAxiosError} from 'axios';
-import {useFavorites} from '../../hooks/useFavorites';
+
+import {RootStackParamList} from '../../../App';
 import {StackScreenSafeArea} from '../../components/StackScreenSafeArea';
+import {Colors} from '../../constants/colors';
+import {useToast} from '../../context/toastContext';
+import {useFavorites} from '../../hooks/useFavorites';
+import {usePersistanceStore} from '../../hooks/usePersistanceStore';
+import {getShowDetails} from '../../services/show';
+import {Show} from '../../types/show';
+import {removeHtmlFromString} from '../../utils/removeHtmlFromString';
 
 export const ShowDetailsScreen = () => {
   const route = useRoute<RouteProp<RootStackParamList>>();
   const navigate = useNavigation<NavigationProp<RootStackParamList>>();
   const {showToast} = useToast();
+  const {get: getFromPersistanceStore, set: setInPersistanceStore} =
+    usePersistanceStore();
   const {
     showIds: favoriteShowIds,
     addShowToFavorites,
@@ -45,7 +50,13 @@ export const ShowDetailsScreen = () => {
     }
     try {
       setLoading(true);
-      const {data} = await getShowDetails(route.params.id);
+      const cacheKey = `shows/${route.params.id}`;
+      let data = await getFromPersistanceStore<Show>(cacheKey);
+      if (!data) {
+        const res = await getShowDetails(route.params.id);
+        data = res.data;
+        await setInPersistanceStore(cacheKey, data);
+      }
       setDetails(data);
     } catch (error) {
       let message = 'An error occurred while retrieving the data';
@@ -59,7 +70,13 @@ export const ShowDetailsScreen = () => {
     } finally {
       setLoading(false);
     }
-  }, [route.params, navigate, showToast]);
+  }, [
+    route.params,
+    navigate,
+    showToast,
+    getFromPersistanceStore,
+    setInPersistanceStore,
+  ]);
 
   useEffect(() => {
     loadData();
